@@ -22,82 +22,84 @@ async function attachStagehandReport(testInfo: TestInfo) {
   }
 }
 
-test.describe.configure({ mode: "serial" });
+test.describe("todo demo", () => {
+  test.describe.configure({ mode: "serial" });
 
-test("todo flow with stagehand only", async ({}, testInfo) => {
-  const stagehand = new Stagehand({
-    env: "LOCAL",
-    verbose: 0,
-    logInferenceToFile: true,
-    localBrowserLaunchOptions: { headless: true },
-  });
-
-  try {
-    await stagehand.init();
-    const page = stagehand.page;
-
-    await page.goto(todoUrl);
-    await page.act("escribe 'Comprar leche' en el campo Nueva tarea");
-    await page.act("haz click en el boton Agregar");
-    await page.act("escribe 'Estudiar Stagehand' en el campo Nueva tarea");
-    await page.act("haz click en el boton Agregar");
-    await page.act("marca como completada la tarea 'Comprar leche'");
-
-    const schema = z.object({
-      todos: z.array(
-        z.object({
-          texto: z.string().describe("Texto de la tarea"),
-          completa: z.boolean().describe("Si la tarea esta completa"),
-        })
-      ),
+  test("todo flow with stagehand only", async ({}, testInfo) => {
+    const stagehand = new Stagehand({
+      env: "LOCAL",
+      verbose: 0,
+      logInferenceToFile: true,
+      localBrowserLaunchOptions: { headless: true },
     });
 
-    const result = await page.extract({
-      instruction:
-        "Devuelve las tareas visibles con texto y si estan completas.",
-      schema,
-    });
+    try {
+      await stagehand.init();
+      const page = stagehand.page;
 
-    expect(result.todos.length).toBeGreaterThan(0);
-    const milk = result.todos.find((todo) =>
-      todo.texto.toLowerCase().includes("comprar leche")
-    );
-    expect(milk?.completa).toBe(true);
-  } finally {
-    await stagehand.close().catch(() => undefined);
-    await attachStagehandReport(testInfo);
-  }
-});
+      await page.goto(todoUrl);
+      await page.act("escribe 'Comprar leche' en el campo Nueva tarea");
+      await page.act("haz click en el boton Agregar");
+      await page.act("escribe 'Estudiar Stagehand' en el campo Nueva tarea");
+      await page.act("haz click en el boton Agregar");
+      await page.act("marca como completada la tarea 'Comprar leche'");
 
-test("hybrid flow with stagehand + playwright", async ({}, testInfo) => {
-  const stagehand = new Stagehand({
-    env: "LOCAL",
-    verbose: 0,
-    logInferenceToFile: true,
-    localBrowserLaunchOptions: { headless: true },
+      const schema = z.object({
+        todos: z.array(
+          z.object({
+            texto: z.string().describe("Texto de la tarea"),
+            completa: z.boolean().describe("Si la tarea esta completa"),
+          })
+        ),
+      });
+
+      const result = await page.extract({
+        instruction:
+          "Devuelve las tareas visibles con texto y si estan completas.",
+        schema,
+      });
+
+      expect(result.todos.length).toBeGreaterThan(0);
+      const milk = result.todos.find((todo) =>
+        todo.texto.toLowerCase().includes("comprar leche")
+      );
+      expect(milk?.completa).toBe(true);
+    } finally {
+      await stagehand.close().catch(() => undefined);
+      await attachStagehandReport(testInfo);
+    }
   });
 
-  try {
-    await stagehand.init();
-    const page = stagehand.page;
+  test("hybrid flow with stagehand + playwright", async ({}, testInfo) => {
+    const stagehand = new Stagehand({
+      env: "LOCAL",
+      verbose: 0,
+      logInferenceToFile: true,
+      localBrowserLaunchOptions: { headless: true },
+    });
 
-    await page.goto(todoUrl);
+    try {
+      await stagehand.init();
+      const page = stagehand.page;
 
-    // Playwright-style deterministic steps.
-    await page.fill("#todo-input", "Pagar cuentas");
-    await page.click("#add-btn");
-    await page.fill("#todo-input", "Lavar auto");
-    await page.click("#add-btn");
+      await page.goto(todoUrl);
 
-    // Stagehand for a natural-language action.
-    await page.act("marca como completada la tarea 'Lavar auto'");
-    await page.act("filtra para ver solo completadas");
+      // Playwright-style deterministic steps.
+      await page.fill("#todo-input", "Pagar cuentas");
+      await page.click("#add-btn");
+      await page.fill("#todo-input", "Lavar auto");
+      await page.click("#add-btn");
 
-    const completed = page.locator("li.todo-item.done");
-    await expect(completed).toHaveCount(1);
-    await expect(completed.first()).toContainText("Lavar auto");
-  } finally {
-    await stagehand.close().catch(() => undefined);
-    await attachStagehandReport(testInfo);
-  }
+      // Stagehand for a natural-language action.
+      await page.act("marca como completada la tarea 'Lavar auto'");
+      await page.act("filtra para ver solo completadas");
+
+      const completed = page.locator("li.todo-item.done");
+      await expect(completed).toHaveCount(1);
+      await expect(completed.first()).toContainText("Lavar auto");
+    } finally {
+      await stagehand.close().catch(() => undefined);
+      await attachStagehandReport(testInfo);
+    }
+  });
 });

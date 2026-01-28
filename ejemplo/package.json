@@ -9,8 +9,8 @@
     "form": "npx tsx src/form-automation.ts",
     "report": "npx tsx src/report.ts",
     "report:serve": "npx tsx src/report-serve.ts",
-    "test:pw": "npx playwright test",
-    "test:pw:report": "npx playwright show-report"
+    "test:pw": "playwright test",
+    "test:pw:report": "playwright show-report"
   },
   "dependencies": {
     "@browserbasehq/stagehand": "^2.0.0",

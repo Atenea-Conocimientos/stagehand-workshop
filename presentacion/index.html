@@ -22,14 +22,18 @@
         .two-columns > div { flex: 1; }
         .reveal ul { text-align: left; }
         .brand { color: #8b5cf6; }
-        .comparison-table { font-size: 0.8em; }
-        .comparison-table td, .comparison-table th { padding: 0.5em 1em; }
+        .comparison-table { font-size: 0.8em; width: 100%; }
+        .comparison-table td, .comparison-table th { padding: 0.5em 0.8em; }
+        .tag { display: inline-block; padding: 0.2em 0.6em; border-radius: 999px; font-size: 0.75em; font-weight: 600; letter-spacing: 0.02em; }
+        .tag.good { background: rgba(88, 166, 255, 0.2); color: #58a6ff; }
+        .tag.warn { background: rgba(255, 166, 87, 0.18); color: #ffa657; }
+        .tag.mid { background: rgba(255, 255, 255, 0.12); color: #e5e7eb; }
     </style>
 </head>
 <body>
     <div class="reveal">
         <div class="slides">
-            
+
             <!-- Slide 1: Título -->
             <section>
                 <h1>🎭 Stagehand</h1>
@@ -122,14 +126,13 @@
             <section>
                 <h2>🎯 act() - Acciones Simples</h2>
                 <pre><code class="language-typescript">
-// Navegar a una página
+const stagehand = new Stagehand({ env: "LOCAL" });
+await stagehand.init();
+const page = stagehand.page;
+
 await page.goto("https://github.com");
-
-// Ejecutar una acción con lenguaje natural
-await stagehand.act("click en el botón Sign in");
-
-// Otra acción
-await stagehand.act("escribir 'mi-usuario' en el campo username");
+await page.act("click en el botón Sign in");
+await page.act("escribir 'mi-usuario' en el campo username");
                 </code></pre>
             </section>
 
@@ -139,21 +142,18 @@ await stagehand.act("escribir 'mi-usuario' en el campo username");
                 <pre><code class="language-typescript">
 import { z } from "zod";
 
-// Definir el schema de lo que queremos
 const schema = z.object({
   titulo: z.string(),
   precio: z.number(),
   disponible: z.boolean()
 });
 
-// Extraer datos estructurados
-const producto = await stagehand.extract(
-  "extraer información del producto",
+const producto = await page.extract({
+  instruction: "extraer información del producto",
   schema
-);
+});
 
 console.log(producto);
-// { titulo: "iPhone 15", precio: 999, disponible: true }
                 </code></pre>
             </section>
 
@@ -161,13 +161,11 @@ console.log(producto);
             <section>
                 <h2>🤖 agent() - Tareas Complejas</h2>
                 <pre><code class="language-typescript">
-// Crear un agente para tareas de múltiples pasos
 const agent = stagehand.agent({
   provider: "anthropic",
   model: "claude-sonnet-4-20250514"
 });
 
-// Ejecutar una tarea compleja
 await agent.execute(
   "Buscar el producto más vendido, agregarlo al carrito, " +
   "y llegar hasta la página de checkout"
@@ -211,7 +209,182 @@ await agent.execute(
                 <p class="highlight">¡Tus tests no se rompen! 🎉</p>
             </section>
 
-            <!-- Slide 11: Setup -->
+            <!-- Slide 11: Comparativa -->
+            <section>
+                <h2>📊 Comparativa rápida</h2>
+                <table class="comparison-table">
+                    <tr>
+                        <th>Aspecto</th>
+                        <th>Playwright solo</th>
+                        <th>Stagehand solo</th>
+                        <th>Híbrido</th>
+                    </tr>
+                    <tr>
+                        <td>Uso ideal</td>
+                        <td>Flujos deterministas, regression estable</td>
+                        <td>UI ambigua, scraping flexible</td>
+                        <td>IA para llegar + asserts por selector</td>
+                    </tr>
+                    <tr>
+                        <td>Velocidad</td>
+                        <td><span class="tag good">Alta</span></td>
+                        <td><span class="tag warn">Media</span></td>
+                        <td><span class="tag mid">Media</span></td>
+                    </tr>
+                    <tr>
+                        <td>Determinismo</td>
+                        <td><span class="tag good">Muy alto</span></td>
+                        <td><span class="tag warn">Variable</span></td>
+                        <td><span class="tag mid">Alto</span></td>
+                    </tr>
+                    <tr>
+                        <td>Costo por run</td>
+                        <td><span class="tag good">Bajo</span></td>
+                        <td><span class="tag warn">Tokens LLM</span></td>
+                        <td><span class="tag mid">Moderado</span></td>
+                    </tr>
+                    <tr>
+                        <td>Observabilidad</td>
+                        <td>Trace + screenshots</td>
+                        <td>Inference logs + report</td>
+                        <td>Trace + inference</td>
+                    </tr>
+                </table>
+            </section>
+
+            <!-- Slide 12: Stagehand + Playwright -->
+            <section>
+                <h2>🧩 Stagehand + Playwright</h2>
+                <p>IA para llegar, Playwright para validar.</p>
+                <pre><code class="language-typescript">
+const page = stagehand.page;
+await page.goto(todoUrl);
+await page.fill("#todo-input", "Lavar auto");
+await page.click("#add-btn");
+await page.act("marca como completada la tarea 'Lavar auto'");
+await expect(page.locator("li.todo-item.done")).toHaveCount(1);
+                </code></pre>
+            </section>
+
+            <!-- Slide 12b: Hibrido paso a paso (1) -->
+            <section>
+                <h2>🔍 Híbrido paso a paso (1/2)</h2>
+                <div class="two-columns">
+                    <div>
+                        <pre><code class="language-typescript" style="font-size: 0.55em;">
+1 const page = stagehand.page;
+2 await page.goto(todoUrl);
+3 await page.fill("#todo-input", "Lavar auto");
+4 await page.click("#add-btn");
+                        </code></pre>
+                    </div>
+                    <div>
+                        <ul class="small">
+                            <li><strong>1:</strong> Page de Stagehand.</li>
+                            <li><strong>2:</strong> Goto URL.</li>
+                            <li><strong>3-4:</strong> Fill + click (Playwright).</li>
+                        </ul>
+                    </div>
+                </div>
+            </section>
+
+            <!-- Slide 12c: Hibrido paso a paso (2) -->
+            <section>
+                <h2>🔍 Híbrido paso a paso (2/2)</h2>
+                <div class="two-columns">
+                    <div>
+                        <pre><code class="language-typescript" style="font-size: 0.55em;">
+5 await page.act("marca como completada la tarea 'Lavar auto'");
+6 await expect(page.locator("li.todo-item.done")).toHaveCount(1);
+                        </code></pre>
+                    </div>
+                    <div>
+                        <ul class="small">
+                            <li><strong>5:</strong> Act IA.</li>
+                            <li><strong>6:</strong> Assert selector.</li>
+                        </ul>
+                    </div>
+                </div>
+            </section>
+
+            <!-- Slide 13: Puede / No puede -->
+            <section>
+                <h2>✅ Qué puede / 🚫 Qué no puede</h2>
+                <div class="two-columns">
+                    <div>
+                        <h4>Puede</h4>
+                        <ul>
+                            <li>Describir acciones en lenguaje natural</li>
+                            <li>Extraer data con schema (Zod)</li>
+                            <li>Resolver layouts cambiantes</li>
+                            <li>Combinar con Playwright para asserts</li>
+                        </ul>
+                    </div>
+                    <div>
+                        <h4>No puede</h4>
+                        <ul>
+                            <li>Garantizar 100% determinismo</li>
+                            <li>Reemplazar tests estables</li>
+                            <li>Evitar costo de LLM</li>
+                            <li>Ser más rápido que selectores directos</li>
+                        </ul>
+                    </div>
+                </div>
+            </section>
+
+            <!-- Slide 14: Consideraciones -->
+            <section>
+                <h2>⚠️ Consideraciones clave</h2>
+                <ul>
+                    <li><strong>Costo y latencia:</strong> cada act/extract consume tokens.</li>
+                    <li><strong>Confiabilidad:</strong> usar Playwright para asserts críticos.</li>
+                    <li><strong>Seguridad:</strong> evitar datos sensibles en prompts.</li>
+                    <li><strong>Observabilidad:</strong> guardar reportes y traces.</li>
+                </ul>
+            </section>
+
+            <!-- Slide 15: Especificaciones técnicas -->
+            <section>
+                <h2>🧪 Especificaciones técnicas (demo)</h2>
+                <table class="comparison-table">
+                    <tr>
+                        <th>Área</th>
+                        <th>Detalle</th>
+                    </tr>
+                    <tr>
+                        <td>Dependencias</td>
+                        <td>@browserbasehq/stagehand, @playwright/test, zod, dotenv</td>
+                    </tr>
+                    <tr>
+                        <td>Entorno</td>
+                        <td>LOCAL o BROWSERBASE</td>
+                    </tr>
+                    <tr>
+                        <td>Salida</td>
+                        <td>Logs, reportes HTML, traces Playwright</td>
+                    </tr>
+                </table>
+            </section>
+
+            <!-- Slide 16: Requisitos -->
+            <section>
+                <h2>🔧 Qué necesitamos para que funcione</h2>
+                <pre><code class="language-bash">
+# Instalar dependencias
+npm install
+
+# Browsers Playwright (una vez)
+npx playwright install
+
+# Variables de entorno (.env)
+# OPENAI_API_KEY=...
+# ANTHROPIC_API_KEY=...
+# BROWSERBASE_API_KEY=... (opcional)
+# BROWSERBASE_PROJECT_ID=... (opcional)
+                </code></pre>
+            </section>
+
+            <!-- Slide 17: Setup -->
             <section>
                 <h2>🚀 Empezar</h2>
                 <pre><code class="language-bash">
@@ -221,15 +394,13 @@ npx create-browser-app
 # O agregar a proyecto existente
 npm install @browserbasehq/stagehand
 
-# Configurar API keys
-cp .env.example .env
-# OPENAI_API_KEY=...
-# ANTHROPIC_API_KEY=...
-# BROWSERBASE_API_KEY=... (opcional)
+# Correr demos
+npm run demo
+npm run test:pw
                 </code></pre>
             </section>
 
-            <!-- Slide 12: Ejemplo completo -->
+            <!-- Slide 18: Ejemplo completo -->
             <section>
                 <h2>📝 Ejemplo Completo</h2>
                 <pre><code class="language-typescript" style="font-size: 0.7em;">
@@ -238,27 +409,82 @@ import { z } from "zod";
 
 const stagehand = new Stagehand({ env: "LOCAL" });
 await stagehand.init();
+const page = stagehand.page;
 
-const page = stagehand.context.pages()[0];
 await page.goto("https://news.ycombinator.com");
 
-// Extraer los top posts
-const posts = await stagehand.extract(
-  "extraer los primeros 5 posts con título y puntos",
-  z.object({
+const posts = await page.extract({
+  instruction: "extraer los primeros 5 posts con título y puntos",
+  schema: z.object({
     posts: z.array(z.object({
       titulo: z.string(),
       puntos: z.number()
     }))
   })
-);
+});
 
 console.log(posts);
 await stagehand.close();
                 </code></pre>
             </section>
 
-            <!-- Slide 13: Local vs Browserbase -->
+            <!-- Slide 18b: Ejemplo paso a paso (1) -->
+            <section>
+                <h2>🔍 Ejemplo paso a paso (1/2)</h2>
+                <div class="two-columns">
+                    <div>
+                        <pre><code class="language-typescript" style="font-size: 0.55em;">
+1 import { Stagehand } from "@browserbasehq/stagehand";
+2 import { z } from "zod";
+3
+4 const stagehand = new Stagehand({ env: "LOCAL" });
+5 await stagehand.init();
+6 const page = stagehand.page;
+7
+8 await page.goto("https://news.ycombinator.com");
+                        </code></pre>
+                    </div>
+                    <div>
+                        <ul class="small">
+                            <li><strong>1-2:</strong> Imports.</li>
+                            <li><strong>4-6:</strong> Instancia + init + page.</li>
+                            <li><strong>8:</strong> Goto sitio.</li>
+                        </ul>
+                    </div>
+                </div>
+            </section>
+
+            <!-- Slide 18c: Ejemplo paso a paso (2) -->
+            <section>
+                <h2>🔍 Ejemplo paso a paso (2/2)</h2>
+                <div class="two-columns">
+                    <div>
+                        <pre><code class="language-typescript" style="font-size: 0.55em;">
+9 const posts = await page.extract({
+10   instruction: "extraer los primeros 5 posts con título y puntos",
+11   schema: z.object({
+12     posts: z.array(z.object({
+13       titulo: z.string(),
+14       puntos: z.number()
+15     }))
+16   })
+17 });
+18
+19 console.log(posts);
+20 await stagehand.close();
+                        </code></pre>
+                    </div>
+                    <div>
+                        <ul class="small">
+                            <li><strong>9-17:</strong> extract + schema.</li>
+                            <li><strong>19:</strong> log salida.</li>
+                            <li><strong>20:</strong> close.</li>
+                        </ul>
+                    </div>
+                </div>
+            </section>
+
+            <!-- Slide 19: Local vs Browserbase -->
             <section>
                 <h2>🌐 Local vs Browserbase</h2>
                 <table class="comparison-table">
@@ -290,7 +516,7 @@ await stagehand.close();
                 </table>
             </section>
 
-            <!-- Slide 14: Casos de uso -->
+            <!-- Slide 20: Casos de uso -->
             <section>
                 <h2>💡 Casos de Uso</h2>
                 <ul>
@@ -302,7 +528,7 @@ await stagehand.close();
                 </ul>
             </section>
 
-            <!-- Slide 15: Demo -->
+            <!-- Slide 21: Demo -->
             <section>
                 <h2>🎬 Demo Time!</h2>
                 <p>Vamos al código...</p>
@@ -310,21 +536,23 @@ await stagehand.close();
 cd ejemplo/
 npm install
 npm run demo
+npm run report:serve
+npm run test:pw -- --trace on
                 </code></pre>
             </section>
 
-            <!-- Slide 16: Recursos -->
+            <!-- Slide 22: Recursos -->
             <section>
                 <h2>📚 Recursos</h2>
                 <ul>
                     <li>📖 <a href="https://docs.stagehand.dev">docs.stagehand.dev</a></li>
                     <li>💻 <a href="https://github.com/browserbase/stagehand">GitHub</a></li>
-                    <li>💬 <a href="https://stagehand.dev/discord">Discord</a></li>
+                    <li>🧪 <a href="https://playwright.dev">Playwright</a></li>
                     <li>🎓 <a href="https://ateneaconocimientos.com">Atenea Conocimientos</a></li>
                 </ul>
             </section>
 
-            <!-- Slide 17: Cierre -->
+            <!-- Slide 23: Cierre -->
             <section>
                 <h1>¿Preguntas? 🤔</h1>
                 <p class="small">
