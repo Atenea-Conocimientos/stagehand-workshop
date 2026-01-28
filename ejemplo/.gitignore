@@ -1,2 +1,4 @@
 inference_summary/
 output/
+playwright-report/
+test-results/

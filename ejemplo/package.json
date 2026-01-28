@@ -8,7 +8,9 @@
     "scraper": "npx tsx src/scraper.ts",
     "form": "npx tsx src/form-automation.ts",
     "report": "npx tsx src/report.ts",
-    "report:serve": "npx tsx src/report-serve.ts"
+    "report:serve": "npx tsx src/report-serve.ts",
+    "test:pw": "npx playwright test",
+    "test:pw:report": "npx playwright show-report"
   },
   "dependencies": {
     "@browserbasehq/stagehand": "^2.0.0",
@@ -16,6 +18,7 @@
     "dotenv": "^16.4.5"
   },
   "devDependencies": {
+    "@playwright/test": "^1.44.0",
     "@types/node": "^22.0.0",
     "tsx": "^4.19.0",
     "typescript": "^5.6.0"
