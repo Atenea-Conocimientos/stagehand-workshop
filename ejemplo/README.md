@@ -39,6 +39,39 @@ Llena un formulario automáticamente:
 npm run form
 ```
 
+## 🎤 Presentacion
+Material visual para la demo (HTML estatico):
+
+```bash
+# Mac
+open public/index.html
+
+# Alternativa
+npx http-server public -p 4173
+```
+
+## 🧪 Playwright + Stagehand
+
+Ejemplo en `tests/todo.stagehand.spec.ts` usando una pagina local `public/todo.html`.
+Incluye un flujo solo con Stagehand y otro mixto (Stagehand + Playwright).
+
+```bash
+# Instalar browsers de Playwright (una sola vez)
+npx playwright install
+
+# Ejecutar tests y generar reporte HTML
+npm run test:pw
+
+# Abrir reporte
+npm run test:pw:report
+
+# Generar traces y abrir Trace Viewer
+npm run test:pw -- --trace on
+npx playwright show-trace test-results/**/trace.zip
+```
+
+Nota: las acciones de Stagehand requieren `OPENAI_API_KEY` o `ANTHROPIC_API_KEY`.
+
 ## 📁 Estructura
 
 ```

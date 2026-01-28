@@ -1,0 +1,546 @@
+<!doctype html>
+<html lang="es">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>Stagehand Workshop - Demo Deck</title>
+    <style>
+      @import url("https://fonts.googleapis.com/css2?family=Fraunces:wght@500;700&family=Space+Grotesk:wght@400;500;600;700&display=swap");
+      :root {
+        --bg: #f7f0e6;
+        --ink: #1c1916;
+        --muted: #6b6259;
+        --accent: #d25f3a;
+        --accent-2: #2b7a67;
+        --card: #fff8ef;
+        --border: #eadccb;
+        --shadow: 0 20px 50px rgba(28, 25, 22, 0.12);
+      }
+      * {
+        box-sizing: border-box;
+      }
+      body {
+        margin: 0;
+        font-family: "Space Grotesk", "Trebuchet MS", sans-serif;
+        color: var(--ink);
+        background:
+          radial-gradient(1200px 800px at 10% -10%, #ffe6cb 0%, transparent 55%),
+          radial-gradient(900px 900px at 90% 10%, #c7efe3 0%, transparent 50%),
+          linear-gradient(180deg, #f7f0e6 0%, #f4e8d9 50%, #f0e1d3 100%);
+        min-height: 100vh;
+      }
+      .page {
+        max-width: 1180px;
+        margin: 0 auto;
+        padding: 48px 24px 88px;
+      }
+      header {
+        display: grid;
+        grid-template-columns: minmax(0, 1.1fr) minmax(0, 0.9fr);
+        gap: 28px;
+        align-items: center;
+        margin-bottom: 36px;
+      }
+      .badge {
+        display: inline-flex;
+        align-items: center;
+        gap: 10px;
+        padding: 8px 14px;
+        border-radius: 999px;
+        border: 1px solid var(--border);
+        background: var(--card);
+        font-size: 0.85rem;
+        letter-spacing: 0.12em;
+        text-transform: uppercase;
+        color: var(--accent-2);
+        width: fit-content;
+      }
+      h1 {
+        font-family: "Fraunces", "Georgia", serif;
+        font-size: clamp(2.8rem, 4.2vw, 4.8rem);
+        margin: 14px 0;
+        letter-spacing: -0.02em;
+      }
+      .lead {
+        font-size: 1.05rem;
+        color: var(--muted);
+        max-width: 540px;
+      }
+      .hero-card {
+        background: var(--card);
+        border: 1px solid var(--border);
+        border-radius: 24px;
+        padding: 24px;
+        box-shadow: var(--shadow);
+        position: relative;
+        overflow: hidden;
+      }
+      .hero-card::after {
+        content: "";
+        position: absolute;
+        inset: auto -40px -40px auto;
+        width: 160px;
+        height: 160px;
+        border-radius: 50%;
+        background: radial-gradient(circle, rgba(210, 95, 58, 0.18), transparent 70%);
+      }
+      .hero-grid {
+        display: grid;
+        gap: 14px;
+      }
+      .hero-item {
+        display: flex;
+        gap: 12px;
+        align-items: flex-start;
+        padding: 12px 14px;
+        border-radius: 16px;
+        border: 1px solid rgba(234, 220, 203, 0.8);
+        background: rgba(255, 255, 255, 0.7);
+      }
+      .hero-item strong {
+        display: block;
+        font-size: 0.95rem;
+      }
+      .hero-item span {
+        color: var(--muted);
+        font-size: 0.9rem;
+      }
+      .section {
+        margin-top: 28px;
+        background: var(--card);
+        border: 1px solid var(--border);
+        border-radius: 24px;
+        padding: 28px;
+        box-shadow: var(--shadow);
+        animation: rise 0.8s ease both;
+      }
+      .section h2 {
+        margin: 0 0 14px;
+        font-size: 1.5rem;
+      }
+      .section p {
+        margin: 0 0 16px;
+        color: var(--muted);
+      }
+      .pill-row {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 10px;
+      }
+      .pill {
+        padding: 8px 12px;
+        border-radius: 999px;
+        border: 1px solid var(--border);
+        background: #fffdf9;
+        font-size: 0.9rem;
+        color: var(--muted);
+      }
+      .cards {
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+        gap: 16px;
+      }
+      .card {
+        padding: 18px;
+        border-radius: 18px;
+        border: 1px solid var(--border);
+        background: #fffdf9;
+      }
+      .card h3 {
+        margin: 0 0 10px;
+        font-size: 1.05rem;
+      }
+      .card ul {
+        margin: 0;
+        padding-left: 18px;
+        color: var(--muted);
+        line-height: 1.5;
+      }
+      .flow {
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
+        gap: 16px;
+      }
+      .flow-step {
+        border-radius: 18px;
+        padding: 18px;
+        border: 1px solid var(--border);
+        background: linear-gradient(145deg, #fffdf9, #fff2e4);
+      }
+      .flow-step span {
+        display: inline-flex;
+        width: 32px;
+        height: 32px;
+        align-items: center;
+        justify-content: center;
+        border-radius: 10px;
+        background: #1c1916;
+        color: #fff;
+        font-weight: 700;
+        margin-bottom: 12px;
+      }
+      .code {
+        background: #1c1916;
+        color: #f3eae0;
+        border-radius: 16px;
+        padding: 18px;
+        overflow-x: auto;
+        font-family: "SFMono-Regular", ui-monospace, "Courier New", monospace;
+        font-size: 0.9rem;
+      }
+      .two-col {
+        display: grid;
+        grid-template-columns: minmax(0, 1fr) minmax(0, 1fr);
+        gap: 20px;
+      }
+      .callout {
+        border-radius: 18px;
+        border: 1px dashed rgba(210, 95, 58, 0.4);
+        padding: 16px;
+        background: rgba(210, 95, 58, 0.08);
+      }
+      .table-wrap {
+        overflow-x: auto;
+      }
+      table {
+        width: 100%;
+        border-collapse: collapse;
+        min-width: 720px;
+      }
+      th,
+      td {
+        text-align: left;
+        padding: 12px 10px;
+        border-bottom: 1px solid var(--border);
+        vertical-align: top;
+      }
+      th {
+        font-size: 0.8rem;
+        letter-spacing: 0.12em;
+        text-transform: uppercase;
+        color: var(--muted);
+      }
+      td strong {
+        color: var(--ink);
+      }
+      .tag {
+        display: inline-flex;
+        padding: 4px 10px;
+        border-radius: 999px;
+        font-size: 0.75rem;
+        font-weight: 600;
+        letter-spacing: 0.04em;
+      }
+      .tag.good {
+        background: rgba(43, 122, 103, 0.15);
+        color: var(--accent-2);
+      }
+      .tag.warn {
+        background: rgba(210, 95, 58, 0.16);
+        color: var(--accent);
+      }
+      .tag.mid {
+        background: rgba(28, 25, 22, 0.12);
+        color: var(--ink);
+      }
+      footer {
+        margin-top: 36px;
+        text-align: center;
+        color: var(--muted);
+        font-size: 0.9rem;
+      }
+      @keyframes rise {
+        from {
+          opacity: 0;
+          transform: translateY(16px);
+        }
+        to {
+          opacity: 1;
+          transform: translateY(0);
+        }
+      }
+      @media (max-width: 980px) {
+        header {
+          grid-template-columns: 1fr;
+        }
+        .two-col {
+          grid-template-columns: 1fr;
+        }
+      }
+      @media (max-width: 640px) {
+        .page {
+          padding: 36px 18px 60px;
+        }
+        .section {
+          padding: 22px;
+        }
+      }
+    </style>
+  </head>
+  <body>
+    <div class="page">
+      <header>
+        <div>
+          <div class="badge">Stagehand Workshop</div>
+          <h1>Demo deck para un live con impacto</h1>
+          <p class="lead">
+            Como usar Stagehand para flujos IA, cuando quedarse con Playwright y
+            como combinarlos para tener velocidad y control.
+          </p>
+        </div>
+        <div class="hero-card">
+          <div class="hero-grid">
+            <div class="hero-item">
+              <div>
+                <strong>Objetivo</strong>
+                <span>Mostrar valor real en automatizacion web.</span>
+              </div>
+            </div>
+            <div class="hero-item">
+              <div>
+                <strong>Formato</strong>
+                <span>Live demo + reportes + trace viewer.</span>
+              </div>
+            </div>
+            <div class="hero-item">
+              <div>
+                <strong>Resultado</strong>
+                <span>Flujos reproducibles y medibles.</span>
+              </div>
+            </div>
+          </div>
+        </div>
+      </header>
+
+      <section class="section">
+        <h2>Mapa rapido</h2>
+        <p>Lo que cubrimos en menos de 20 minutos.</p>
+        <div class="pill-row">
+          <div class="pill">Stagehand act + extract</div>
+          <div class="pill">Reportes HTML locales</div>
+          <div class="pill">Playwright tests + trace viewer</div>
+          <div class="pill">Mix IA + selectores</div>
+        </div>
+      </section>
+
+      <section class="section">
+        <h2>Comparativa rapida</h2>
+        <div class="table-wrap">
+          <table>
+            <thead>
+              <tr>
+                <th>Aspecto</th>
+                <th>Playwright solo</th>
+                <th>Stagehand solo</th>
+                <th>Hibrido</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr>
+                <td><strong>Uso ideal</strong></td>
+                <td>Flujos deterministas, regression estable</td>
+                <td>UI ambigua, exploracion, scraping flexible</td>
+                <td>IA para llegar + asserts por selector</td>
+              </tr>
+              <tr>
+                <td><strong>Velocidad</strong></td>
+                <td><span class="tag good">Alta</span></td>
+                <td><span class="tag warn">Media</span></td>
+                <td><span class="tag mid">Media</span></td>
+              </tr>
+              <tr>
+                <td><strong>Determinismo</strong></td>
+                <td><span class="tag good">Muy alto</span></td>
+                <td><span class="tag warn">Variable</span></td>
+                <td><span class="tag mid">Alto</span></td>
+              </tr>
+              <tr>
+                <td><strong>Costo por run</strong></td>
+                <td><span class="tag good">Bajo</span></td>
+                <td><span class="tag warn">Tokens LLM</span></td>
+                <td><span class="tag mid">Moderado</span></td>
+              </tr>
+              <tr>
+                <td><strong>Mantenimiento</strong></td>
+                <td>Selector changes</td>
+                <td>Prompt tuning</td>
+                <td>Balance de ambos</td>
+              </tr>
+              <tr>
+                <td><strong>Observabilidad</strong></td>
+                <td>Trace + screenshots</td>
+                <td>Inference logs + report</td>
+                <td>Trace + inference</td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+      </section>
+
+      <section class="section">
+        <h2>Que puede y que no puede</h2>
+        <div class="two-col">
+          <div class="card">
+            <h3>Puede</h3>
+            <ul>
+              <li>Describir acciones en lenguaje natural (act).</li>
+              <li>Extraer data con schema (extract + Zod).</li>
+              <li>Resolver layouts cambiantes o desconocidos.</li>
+              <li>Combinar con Playwright para asserts.</li>
+            </ul>
+          </div>
+          <div class="card">
+            <h3>No puede</h3>
+            <ul>
+              <li>Garantizar 100% determinismo en UI dinamica.</li>
+              <li>Reemplazar tests de regresion estables.</li>
+              <li>Evitar costo de LLM (tokens).</li>
+              <li>Ser mas rapido que un selector directo.</li>
+            </ul>
+          </div>
+        </div>
+      </section>
+
+      <section class="section">
+        <h2>Especificaciones tecnicas (demo)</h2>
+        <div class="cards">
+          <div class="card">
+            <h3>Dependencias</h3>
+            <ul>
+              <li>@browserbasehq/stagehand</li>
+              <li>@playwright/test (dev)</li>
+              <li>zod, dotenv</li>
+            </ul>
+          </div>
+          <div class="card">
+            <h3>Entorno</h3>
+            <ul>
+              <li>Node LTS recomendado</li>
+              <li>Playwright browsers instalados</li>
+              <li>Env: LOCAL o BROWSERBASE</li>
+            </ul>
+          </div>
+          <div class="card">
+            <h3>Salida</h3>
+            <ul>
+              <li>Logs en consola</li>
+              <li>Reporte HTML local</li>
+              <li>Playwright report + traces</li>
+            </ul>
+          </div>
+        </div>
+      </section>
+
+      <section class="section">
+        <h2>Consideraciones clave</h2>
+        <p>Lo que tener en cuenta antes de adoptar Stagehand en produccion.</p>
+        <div class="cards">
+          <div class="card">
+            <h3>Costo y latencia</h3>
+            <ul>
+              <li>Cada act/extract consume tokens.</li>
+              <li>Mayor latencia que selectores directos.</li>
+              <li>Medir costo por run en workflows grandes.</li>
+            </ul>
+          </div>
+          <div class="card">
+            <h3>Confiabilidad</h3>
+            <ul>
+              <li>UI dinamica puede cambiar el resultado.</li>
+              <li>Usar Playwright para asserts criticos.</li>
+              <li>Iterar prompts cuando el layout cambia.</li>
+            </ul>
+          </div>
+          <div class="card">
+            <h3>Seguridad y datos</h3>
+            <ul>
+              <li>Evitar enviar datos sensibles al modelo.</li>
+              <li>Revisar logs y reportes compartidos.</li>
+              <li>Definir politicas de retencion.</li>
+            </ul>
+          </div>
+        </div>
+      </section>
+
+      <section class="section">
+        <h2>Stagehand + Playwright (combo ganador)</h2>
+        <p>Cuando mezclar IA con pasos deterministas.</p>
+        <div class="flow">
+          <div class="flow-step">
+            <span>1</span>
+            <h3>Stagehand</h3>
+            <p>Para UI ambigua, cambios de layout o busquedas humanas.</p>
+          </div>
+          <div class="flow-step">
+            <span>2</span>
+            <h3>Playwright</h3>
+            <p>Para selectores estables, asserts y performance.</p>
+          </div>
+          <div class="flow-step">
+            <span>3</span>
+            <h3>Hibrido</h3>
+            <p>IA para llegar, Playwright para validar.</p>
+          </div>
+        </div>
+        <div class="code">const page = stagehand.page;
+await page.goto(todoUrl);
+await page.fill("#todo-input", "Lavar auto");
+await page.click("#add-btn");
+await page.act("marca como completada la tarea 'Lavar auto'");
+await expect(page.locator("li.todo-item.done")).toHaveCount(1);</div>
+      </section>
+
+      <section class="section">
+        <h2>Reportes y trazas</h2>
+        <div class="two-col">
+          <div class="card">
+            <h3>Stagehand report</h3>
+            <p>Inference logs + resultados en HTML.</p>
+            <div class="code">npm run report
+npm run report:serve</div>
+          </div>
+          <div class="card">
+            <h3>Playwright report</h3>
+            <p>HTML report + Trace Viewer para revisar pasos.</p>
+            <div class="code">npm run test:pw
+npm run test:pw:report
+npm run test:pw -- --trace on
+npx playwright show-trace test-results/**/trace.zip</div>
+          </div>
+        </div>
+      </section>
+
+      <section class="section">
+        <h2>Requisitos para que funcione</h2>
+        <div class="two-col">
+          <div class="code">npm install
+npx playwright install
+
+# Keys en .env
+OPENAI_API_KEY=...
+ANTHROPIC_API_KEY=...</div>
+          <div class="callout">
+            Para Browserbase: configurar BROWSERBASE_API_KEY y
+            BROWSERBASE_PROJECT_ID. En local se usa el navegador local.
+          </div>
+        </div>
+      </section>
+
+      <section class="section">
+        <h2>Checklist antes del live</h2>
+        <div class="two-col">
+          <div class="code">npm run demo
+npm run report
+npm run report:serve</div>
+          <div class="code">npm run test:pw
+npm run test:pw -- --trace on
+npx playwright show-report</div>
+        </div>
+      </section>
+
+      <footer>
+        Atenea Conocimientos - Stagehand Workshop
+      </footer>
+    </div>
+  </body>
+</html>
