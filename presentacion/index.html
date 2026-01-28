@@ -1,0 +1,348 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Intro a Stagehand - Atenea Conocimientos</title>
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/reveal.js@4.6.1/dist/reveal.min.css">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/reveal.js@4.6.1/dist/theme/night.min.css">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/reveal.js@4.6.1/plugin/highlight/monokai.min.css">
+    <style>
+        :root {
+            --r-heading-color: #58a6ff;
+            --r-link-color: #58a6ff;
+        }
+        .reveal h1, .reveal h2 { text-transform: none; }
+        .reveal pre { width: 100%; }
+        .reveal pre code { max-height: 500px; }
+        .emoji { font-size: 1.5em; }
+        .highlight { color: #ffa657; }
+        .small { font-size: 0.7em; }
+        .two-columns { display: flex; gap: 2em; }
+        .two-columns > div { flex: 1; }
+        .reveal ul { text-align: left; }
+        .brand { color: #8b5cf6; }
+        .comparison-table { font-size: 0.8em; }
+        .comparison-table td, .comparison-table th { padding: 0.5em 1em; }
+    </style>
+</head>
+<body>
+    <div class="reveal">
+        <div class="slides">
+            
+            <!-- Slide 1: Título -->
+            <section>
+                <h1>🎭 Stagehand</h1>
+                <h3>Browser Automation con IA</h3>
+                <p class="small">
+                    <span class="brand">Atenea Conocimientos</span> | 2026
+                </p>
+            </section>
+
+            <!-- Slide 2: El problema -->
+            <section>
+                <h2>😤 El Problema</h2>
+                <div class="two-columns">
+                    <div>
+                        <h4>Selenium / Playwright</h4>
+                        <ul>
+                            <li>Selectores frágiles</li>
+                            <li>Se rompen con cambios de UI</li>
+                            <li>Mucho código boilerplate</li>
+                        </ul>
+                    </div>
+                    <div>
+                        <h4>Agentes de IA puros</h4>
+                        <ul>
+                            <li>Impredecibles</li>
+                            <li>Costosos (muchos tokens)</li>
+                            <li>Lentos</li>
+                        </ul>
+                    </div>
+                </div>
+            </section>
+
+            <!-- Slide 3: La solución -->
+            <section>
+                <h2>✨ La Solución: Stagehand</h2>
+                <p>Lo mejor de ambos mundos:</p>
+                <ul>
+                    <li><span class="highlight">Código</span> cuando sabés qué hacer</li>
+                    <li><span class="highlight">IA</span> cuando necesitás flexibilidad</li>
+                    <li><span class="highlight">Caching</span> para no repetir inferencias</li>
+                </ul>
+            </section>
+
+            <!-- Slide 4: Arquitectura -->
+            <section>
+                <h2>🏗️ Arquitectura</h2>
+                <pre><code class="language-plaintext">
+┌─────────────────────────────────────┐
+│           Tu Código                 │
+├─────────────────────────────────────┤
+│  act()  │  extract()  │  agent()   │
+├─────────────────────────────────────┤
+│         Stagehand Core              │
+├─────────────────────────────────────┤
+│     CDP (Chrome DevTools Protocol)  │
+├─────────────────────────────────────┤
+│  Navegador (Local o Browserbase)    │
+└─────────────────────────────────────┘
+                </code></pre>
+            </section>
+
+            <!-- Slide 5: Métodos principales -->
+            <section>
+                <h2>🔧 Los 3 Métodos Clave</h2>
+                <table class="comparison-table">
+                    <tr>
+                        <th>Método</th>
+                        <th>Uso</th>
+                        <th>Ejemplo</th>
+                    </tr>
+                    <tr>
+                        <td><code>act()</code></td>
+                        <td>Acciones simples</td>
+                        <td>"click en Login"</td>
+                    </tr>
+                    <tr>
+                        <td><code>extract()</code></td>
+                        <td>Extraer datos</td>
+                        <td>"obtener precio"</td>
+                    </tr>
+                    <tr>
+                        <td><code>agent()</code></td>
+                        <td>Tareas complejas</td>
+                        <td>"completar el checkout"</td>
+                    </tr>
+                </table>
+            </section>
+
+            <!-- Slide 6: act() -->
+            <section>
+                <h2>🎯 act() - Acciones Simples</h2>
+                <pre><code class="language-typescript">
+// Navegar a una página
+await page.goto("https://github.com");
+
+// Ejecutar una acción con lenguaje natural
+await stagehand.act("click en el botón Sign in");
+
+// Otra acción
+await stagehand.act("escribir 'mi-usuario' en el campo username");
+                </code></pre>
+            </section>
+
+            <!-- Slide 7: extract() -->
+            <section>
+                <h2>📊 extract() - Obtener Datos</h2>
+                <pre><code class="language-typescript">
+import { z } from "zod";
+
+// Definir el schema de lo que queremos
+const schema = z.object({
+  titulo: z.string(),
+  precio: z.number(),
+  disponible: z.boolean()
+});
+
+// Extraer datos estructurados
+const producto = await stagehand.extract(
+  "extraer información del producto",
+  schema
+);
+
+console.log(producto);
+// { titulo: "iPhone 15", precio: 999, disponible: true }
+                </code></pre>
+            </section>
+
+            <!-- Slide 8: agent() -->
+            <section>
+                <h2>🤖 agent() - Tareas Complejas</h2>
+                <pre><code class="language-typescript">
+// Crear un agente para tareas de múltiples pasos
+const agent = stagehand.agent({
+  provider: "anthropic",
+  model: "claude-sonnet-4-20250514"
+});
+
+// Ejecutar una tarea compleja
+await agent.execute(
+  "Buscar el producto más vendido, agregarlo al carrito, " +
+  "y llegar hasta la página de checkout"
+);
+                </code></pre>
+            </section>
+
+            <!-- Slide 9: Caching -->
+            <section>
+                <h2>⚡ Auto-Caching</h2>
+                <div class="two-columns">
+                    <div>
+                        <h4>Primera ejecución</h4>
+                        <ul>
+                            <li>LLM analiza la página</li>
+                            <li>Encuentra el elemento</li>
+                            <li>Guarda en cache</li>
+                        </ul>
+                    </div>
+                    <div>
+                        <h4>Siguientes ejecuciones</h4>
+                        <ul>
+                            <li>Usa el cache</li>
+                            <li>Sin llamadas al LLM</li>
+                            <li>Súper rápido 🚀</li>
+                        </ul>
+                    </div>
+                </div>
+            </section>
+
+            <!-- Slide 10: Self-Healing -->
+            <section>
+                <h2>🔄 Self-Healing</h2>
+                <p>Cuando el sitio cambia:</p>
+                <ol>
+                    <li>Stagehand detecta que el selector cacheado falló</li>
+                    <li>Automáticamente vuelve a usar IA</li>
+                    <li>Encuentra el nuevo elemento</li>
+                    <li>Actualiza el cache</li>
+                </ol>
+                <p class="highlight">¡Tus tests no se rompen! 🎉</p>
+            </section>
+
+            <!-- Slide 11: Setup -->
+            <section>
+                <h2>🚀 Empezar</h2>
+                <pre><code class="language-bash">
+# Crear un nuevo proyecto
+npx create-browser-app
+
+# O agregar a proyecto existente
+npm install @browserbasehq/stagehand
+
+# Configurar API keys
+cp .env.example .env
+# OPENAI_API_KEY=...
+# ANTHROPIC_API_KEY=...
+# BROWSERBASE_API_KEY=... (opcional)
+                </code></pre>
+            </section>
+
+            <!-- Slide 12: Ejemplo completo -->
+            <section>
+                <h2>📝 Ejemplo Completo</h2>
+                <pre><code class="language-typescript" style="font-size: 0.7em;">
+import { Stagehand } from "@browserbasehq/stagehand";
+import { z } from "zod";
+
+const stagehand = new Stagehand({ env: "LOCAL" });
+await stagehand.init();
+
+const page = stagehand.context.pages()[0];
+await page.goto("https://news.ycombinator.com");
+
+// Extraer los top posts
+const posts = await stagehand.extract(
+  "extraer los primeros 5 posts con título y puntos",
+  z.object({
+    posts: z.array(z.object({
+      titulo: z.string(),
+      puntos: z.number()
+    }))
+  })
+);
+
+console.log(posts);
+await stagehand.close();
+                </code></pre>
+            </section>
+
+            <!-- Slide 13: Local vs Browserbase -->
+            <section>
+                <h2>🌐 Local vs Browserbase</h2>
+                <table class="comparison-table">
+                    <tr>
+                        <th></th>
+                        <th>Local</th>
+                        <th>Browserbase</th>
+                    </tr>
+                    <tr>
+                        <td>Setup</td>
+                        <td>Simple</td>
+                        <td>API Key</td>
+                    </tr>
+                    <tr>
+                        <td>Costo</td>
+                        <td>Gratis</td>
+                        <td>Por uso</td>
+                    </tr>
+                    <tr>
+                        <td>Escalabilidad</td>
+                        <td>Limitada</td>
+                        <td>Ilimitada</td>
+                    </tr>
+                    <tr>
+                        <td>Stealth</td>
+                        <td>Básico</td>
+                        <td>Avanzado</td>
+                    </tr>
+                </table>
+            </section>
+
+            <!-- Slide 14: Casos de uso -->
+            <section>
+                <h2>💡 Casos de Uso</h2>
+                <ul>
+                    <li>🧪 <strong>Testing E2E</strong> - Tests que no se rompen</li>
+                    <li>🕷️ <strong>Web Scraping</strong> - Extraer datos estructurados</li>
+                    <li>🤖 <strong>RPA</strong> - Automatizar tareas repetitivas</li>
+                    <li>📊 <strong>Monitoreo</strong> - Verificar contenido de sitios</li>
+                    <li>🔄 <strong>Integraciones</strong> - Conectar sistemas sin API</li>
+                </ul>
+            </section>
+
+            <!-- Slide 15: Demo -->
+            <section>
+                <h2>🎬 Demo Time!</h2>
+                <p>Vamos al código...</p>
+                <pre><code class="language-bash">
+cd ejemplo/
+npm install
+npm run demo
+                </code></pre>
+            </section>
+
+            <!-- Slide 16: Recursos -->
+            <section>
+                <h2>📚 Recursos</h2>
+                <ul>
+                    <li>📖 <a href="https://docs.stagehand.dev">docs.stagehand.dev</a></li>
+                    <li>💻 <a href="https://github.com/browserbase/stagehand">GitHub</a></li>
+                    <li>💬 <a href="https://stagehand.dev/discord">Discord</a></li>
+                    <li>🎓 <a href="https://ateneaconocimientos.com">Atenea Conocimientos</a></li>
+                </ul>
+            </section>
+
+            <!-- Slide 17: Cierre -->
+            <section>
+                <h1>¿Preguntas? 🤔</h1>
+                <p class="small">
+                    <a href="https://ateneaconocimientos.com">ateneaconocimientos.com</a>
+                </p>
+            </section>
+
+        </div>
+    </div>
+
+    <script src="https://cdn.jsdelivr.net/npm/reveal.js@4.6.1/dist/reveal.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/reveal.js@4.6.1/plugin/highlight/highlight.min.js"></script>
+    <script>
+        Reveal.initialize({
+            hash: true,
+            slideNumber: true,
+            plugins: [ RevealHighlight ]
+        });
+    </script>
+</body>
+</html>
