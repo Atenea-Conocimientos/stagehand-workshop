@@ -6,7 +6,9 @@
   "scripts": {
     "demo": "npx tsx src/demo.ts",
     "scraper": "npx tsx src/scraper.ts",
-    "form": "npx tsx src/form-automation.ts"
+    "form": "npx tsx src/form-automation.ts",
+    "report": "npx tsx src/report.ts",
+    "report:serve": "npx tsx src/report-serve.ts"
   },
   "dependencies": {
     "@browserbasehq/stagehand": "^2.0.0",
