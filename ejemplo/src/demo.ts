@@ -17,13 +17,14 @@ async function main() {
     env: "LOCAL",
     verbose: 1, // 0 = silencioso, 1 = info, 2 = debug
     headless: false, // true para correr sin ventana visible
+    logInferenceToFile: true,
   });
 
   await stagehand.init();
   console.log("✅ Stagehand iniciado\n");
 
-  // Obtener la página del navegador
-  const page = stagehand.context.pages()[0];
+  // Obtener la página del navegador (v2 expone métodos act/extract en stagehand.page)
+  const page = stagehand.page;
 
   // 1️⃣ Navegar a una página
   console.log("📍 Navegando a Hacker News...");
@@ -31,7 +32,7 @@ async function main() {
 
   // 2️⃣ Usar act() para hacer click
   console.log("🖱️  Haciendo click en 'new'...");
-  await stagehand.act("click en el link 'new' en la navegación");
+  await page.act("click en el link 'new' en la navegación");
 
   // Esperar un momento para ver el resultado
   await new Promise((r) => setTimeout(r, 2000));
@@ -50,10 +51,10 @@ async function main() {
     ),
   });
 
-  const resultado = await stagehand.extract(
-    "Extraer los primeros 5 posts con su título, URL, puntos y autor",
-    schema
-  );
+  const resultado = await page.extract({
+    instruction: "Extraer los primeros 5 posts con su título, URL, puntos y autor",
+    schema,
+  });
 
   console.log("📝 Posts extraídos:");
   console.log("─".repeat(50));
